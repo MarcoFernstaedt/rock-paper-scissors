@@ -37,19 +37,21 @@ const playRound = (computerSelected, playerSelected) => {
     }
 }
 
+// function that starts the game for 5 rounds
 const game = () => {
     for (let rounds = 0; rounds < 5; rounds++) {
+        // computer and player selection
         const computerSelected = computerPlay()
         const playerSelected = prompt("Please select Rock, Paper or Scissors")
 
         console.log(playRound(computerSelected, playerSelected))
-        if (playerScore > computerScore) {
-            return console.log(`The Winner is You! with a score of ${playerScore}`)
-        } else {
-            return console.log(`The Winner is Computer with a score of ${computerScore}`)
-        }
     }
-    retur
+    // determiing winer
+    if (playerScore > computerScore) {
+        return console.log(`Player wins with a score of ${playerScore}`)
+    } else if (computerScore > playerScore) {
+        return console.log(`Computer Wins with a score of ${computerScore}`)
+    }
 }
 
 game()
