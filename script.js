@@ -1,57 +1,62 @@
-// computer picks rock, paper or scisors. randomly seleted from array output: rock
-const computerPlay = () => {
-    // options for computer to choose
-    const options = ["rock", "paper", "scissors"];
-    // selection an option at random.
-    const randomOption = Math.floor(Math.random() * options.length)
-    // assigning random option to a variable.
-    const computerChoice = options[randomOption]
-    // returing the variable.
-    return computerChoice;
+const selectionButtons = document.querySelectorAll('[data-selection]')
+const finalColumn = document.querySelector('[data-final-column]')
+const computerScoreSpan = document.querySelector('[data-computer-score]')
+const yourScoreSpan = document.querySelector('[data-your-score]')
+const SELECTIONS = [
+    {
+        name: 'rock',
+        emoji: '✊',
+        beats: 'scissors'
+    },
+    {
+        name: 'paper',
+        emoji: '✋',
+        beats: 'rock'
+    },
+    {
+        name: 'scissors',
+        emoji: '✌',
+        beats: 'paper'
+    }
+]
+
+selectionButtons.forEach(selectionButton => {
+    selectionButton.addEventListener('click', e => {
+        const selectionName = selectionButton.dataset.selection
+        const selection = SELECTIONS.find(selection => selection.name === selectionName)
+        makeSelection(selection)
+    })
+})
+
+function makeSelection(selection) {
+    const computerSelection = randomSelection()
+    const yourWinner = isWinner(selection, computerSelection)
+    const computerWinner = isWinner(computerSelection, selection)
+
+    addSelectionResult(computerSelection, computerWinner)
+    addSelectionResult(selection, yourWinner)
+
+    if (yourWinner) incrementScore(yourScoreSpan)
+    if (computerWinner) incrementScore(computerScoreSpan)
 }
 
-// keepp track of player score
-let playerScore = 0
-let computerScore = 0
-
-// plays through a round
-const playRound = (computerSelected, playerSelected) => {
-    // to prevent case sensitive errors
-    playerSelected.toLowerCase()
-
-    // all possible scenarios which player wins, if player loses else statment takes over
-    if (playerSelected === "rock" && computerSelected === "scissors") {
-        playerScore++
-        return `You Win! ${playerSelected} beats ${computerSelected}`
-    } else if (playerSelected === "paper" && computerSelected === "rock") {
-        playerScore++
-        return `You Win! ${playerSelected} beats ${computerSelected}`
-    } else if (playerSelected === "scissors" && computerSelected === "paper") {
-        playerScore++
-        return `You Win! ${playerSelected} beats ${computerSelected}`
-    } else if (playerSelected === computerSelected) {
-        return `Tie! better luck next time`
-    } else {
-        computerScore++
-        return `You Lose! ${computerSelected} beats ${playerSelected}`
-    }
+function incrementScore(scoreSpan) {
+    scoreSpan.innerText = parseInt(scoreSpan.innerText) + 1
 }
 
-// function that starts the game for 5 rounds
-const game = () => {
-    for (let rounds = 0; rounds < 5; rounds++) {
-        // computer and player selection
-        const computerSelected = computerPlay()
-        const playerSelected = prompt("Please select Rock, Paper or Scissors")
-
-        console.log(playRound(computerSelected, playerSelected))
-    }
-    // determiing winer
-    if (playerScore > computerScore) {
-        return console.log(`Player wins with a score of ${playerScore}`)
-    } else if (computerScore > playerScore) {
-        return console.log(`Computer Wins with a score of ${computerScore}`)
-    }
+function addSelectionResult(selection, winner) {
+    const div = document.createElement('div')
+    div.innerText = selection.emoji
+    div.classList.add('result-selection')
+    if (winner) div.classList.add('winner')
+    finalColumn.after(div)
 }
 
-game()
+function isWinner(selection, opponentSelection) {
+    return selection.beats === opponentSelection.name
+}
+
+function randomSelection() {
+    const randomIndex = Math.floor(Math.random() * SELECTIONS.length)
+    return SELECTIONS[randomIndex]
+}
